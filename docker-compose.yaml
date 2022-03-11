@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+    twt:
+        build: .docker/dashboard
+        volumes:
+            - ./.docker/data:/usr/local/WB/data
+            - ./backend:/usr/local/WB/backend
+        container_name: twt
+        restart: always
+        ports:
+            - "4547:4547"

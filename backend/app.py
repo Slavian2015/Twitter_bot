@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash, url_for
+from flask import Flask, render_template, request, redirect, session, flash, url_for, jsonify
 from functools import wraps
 import json
 from requests_oauthlib import OAuth1Session
@@ -42,7 +42,21 @@ def login():
     return render_template("login.html")
 
 
+# check if user logged in
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please Login', 'danger')
+            return redirect(url_for('login'))
+
+    return wrap
+
+
 @app.route('/keys', methods=['POST', 'GET'])
+@is_logged_in
 def keys():
     if request.method == 'POST':
         consumer_key = request.form["consumer_key"]
@@ -82,6 +96,7 @@ def keys():
 
 
 @app.route('/pincode', methods=['POST', 'GET'])
+@is_logged_in
 def pincode():
     if request.method == 'POST':
         new_pincode = request.form["pincode"]
@@ -117,19 +132,6 @@ def pincode():
         return redirect('home')
 
     return render_template("pincode.html")
-
-
-# check if user logged in
-def is_logged_in(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('Unauthorized, Please Login', 'danger')
-            return redirect(url_for('login'))
-
-    return wrap
 
 
 # Registration
@@ -238,10 +240,40 @@ def home():
 
 
 @app.route("/logout")
+@is_logged_in
 def logout():
     session.clear()
     flash('You are now logged out', 'success')
     return redirect(url_for('login'))
+
+
+# add_link
+@app.route('/add_link', methods=['POST', 'GET'])
+def add_link():
+    print("\n\n ADD LINK ===>>> \n\n")
+    if request.method == 'POST':
+        data2 = json.loads(request.data)
+        print(data2)
+
+        new_text = data2["text"]
+        new_link = data2["link"]
+
+        with open(main_links_path, "r") as fj:
+            data = json.load(fj)
+
+        data[f"{len(data) + 1}"] = {"text": new_text,
+                                    "link": new_link}
+
+        with open(main_links_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+
+        return jsonify({"status": 200, "data": data})
+
+    else:
+        with open(main_links_path, "r") as fj:
+            data = json.load(fj)
+
+        return jsonify({"status": 200, "data": data})
 
 
 if __name__ == '__main__':

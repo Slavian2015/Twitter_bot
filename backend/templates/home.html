@@ -1,5 +1,55 @@
 {% extends 'layout.html' %}
 {% block body %}
-  <h3 class='jumbotron'>Welcome : {{session.username}}</h3>
+  {% if session.all_links %}
+    <div class="card rounded-3">
+      <div class="card-body p-4">
+
+        <h4 class="text-center my-3 pb-3">Twitter LINKS</h4>
+
+        <table class="table mb-4">
+          <thead>
+            <tr>
+              <th scope="col">No.</th>
+              <th scope="col">Link</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            {% for item in session.all_links %}
+
+              <tr>
+                <th scope="row">{{ item.id }}</th>
+                <td><p><a href="{{ item.link }}" target="_blank">link {{ item.id }}</a></p></td>
+
+                {% if item.status == True %}
+                  <td>Done</td>
+                  <td>
+                    <button type="submit" class="btn btn-danger ms-1" disabled>Finished</button>
+                  </td>
+
+                {% else %}
+
+                  <td>New</td>
+                  <td>
+                    <form action="/home" method="post">
+                      <button type="submit" name="btn_run_{{ item.id }}" class="btn btn-success ms-1">RUN</button>
+                    </form>
+                  </td>
+                {% endif %}
+              </tr>
+
+            {% endfor %}
+
+          </tbody>
+        </table>
+      </div>
+      </div>
+  {% else %}
+  <h3 class='jumbotron'>{{session.username}} <br> Чтобы продолжить необходимо добавить Twitter API keys </h3>
+  {% endif %}
+
 {% endblock %}
+
 

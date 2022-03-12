@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block body %}
+  <div class='row mt-5'>
+    <div class='col-4 mx-auto'>
+      <h4 class='text-center'>Follow the link and enter the PIN</h4><hr>
+      <p><a class='text-center' href={{session.link}} target="_blank">{{session.link}}</a></p>
+      <form action="{{url_for('pincode')}}" method='post'>
+
+        <div class='form-group'>
+          <label>PIN :</label>
+          <input type='text' name='pincode' required class='form-control'>
+        </div>
+        <input type='submit' name='submit_pin' value='Submit' class='btn btn-success'>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+

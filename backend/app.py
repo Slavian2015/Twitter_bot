@@ -4,6 +4,7 @@ import json
 from requests_oauthlib import OAuth1Session
 import random
 import twit
+from collections import OrderedDict
 
 app = Flask(__name__)
 main_path = '/usr/local/WB/data/users.json'
@@ -180,6 +181,8 @@ def home():
             with open(main_links_path, "r") as fj:
                 data_links = json.load(fj)
 
+            data_links = dict(reversed(list(OrderedDict(data_links).items())))
+
             for k, v in data_links.items():
                 if k in data_user[session['email']]["LINKS"]:
                     all_links.append({"id": k,
@@ -195,6 +198,7 @@ def home():
         session['all_links'] = all_links
 
         return render_template('home.html')
+
     elif request.method == 'POST':
         new_id = list(request.form.keys())[0].split("_")[-1]
 
@@ -219,8 +223,7 @@ def home():
 
         all_links = []
 
-        with open(main_links_path, "r") as fj:
-            data_links = json.load(fj)
+        data_links = dict(reversed(list(OrderedDict(data_links).items())))
 
         for k, v in data_links.items():
             if k in data_user[session['email']]["LINKS"]:

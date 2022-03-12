@@ -152,7 +152,7 @@ def reg():
                 return render_template("reg.html", status=status)
 
         with open(main_path, 'w', encoding='utf-8') as f:
-            data[email] = {"UPASS": pwd, "UNAME": name, "LINK": []}
+            data[email] = {"UPASS": pwd, "UNAME": name, "LINKS": []}
             json.dump(data, f, ensure_ascii=False, indent=4)
 
         with open(main_keys_path, "r") as fj:

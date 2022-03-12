@@ -129,6 +129,8 @@ def pincode():
             data[session['email']]['access_token_secret'] = access_token_secret
 
             json.dump(data, f, ensure_ascii=False, indent=4)
+
+        session['data'] = data[session['email']]
         flash('Connected Account Successfully...', 'success')
         return redirect('home')
 
